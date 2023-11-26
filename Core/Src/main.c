@@ -65,8 +65,9 @@ struct _ADC_tag ADC1_Channel =
 
 };
 uint16_t DAC_Output=0;
-float Vref;
-uint16_t Bit;
+float ADC_V_Read;
+float Volt;
+uint16_t DAC_Bit;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -394,6 +395,7 @@ void ADC_Read_blocking()
 	HAL_ADC_Start(&hadc1);
 	HAL_ADC_PollForConversion(&hadc1, 100);
 	ADC1_Channel.data = HAL_ADC_GetValue(&hadc1);
+	ADC_V_Read = (3.3/1024)*1000*ADC1_Channel.data;
 	HAL_ADC_Stop(&hadc1);
 }
 void DAC_Update()
@@ -402,8 +404,8 @@ void DAC_Update()
 	if(HAL_GetTick()>timeStamp)
 	{
 	timeStamp = HAL_GetTick()+750;
-	Bit = (Vref*4096)/(3.3*1000);
-	HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, Bit);
+	DAC_Bit = (Volt*4096)/(3.3*1000);
+	HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, DAC_Bit);
 	}
 }
 /* USER CODE END 4 */
