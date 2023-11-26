@@ -400,11 +400,18 @@ void ADC_Read_blocking()
 }
 void DAC_Update()
 {
+	GPIO_PinState B1 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
 	static uint32_t timeStamp =0;
 	if(HAL_GetTick()>timeStamp)
 	{
 	timeStamp = HAL_GetTick()+750;
-	DAC_Bit = (Volt*4096)/(3.3*1000);
+	if(B1 == 0){
+		DAC_Bit = (Volt*4096)/(3.3*1000);
+	}
+	else if(B1 == 1){
+		DAC_Bit = (ADC_V_Read*4096)/(3.3*1000);
+	}
+//	Volt = (3.3/4096)*1000*DAC_Bit;
 	HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, DAC_Bit);
 	}
 }
